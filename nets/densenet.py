@@ -29,6 +29,13 @@ def block(net, layers, growth, scope='block'):
         net = tf.concat(axis=3, values=[net, tmp])
     return net
 
+def transition(current, num_outputs, scope='transition'):
+    current = slim.batch_norm(current, scope=scope + '_bn')
+    current = slim.conv2d(current, num_outputs, [1,1], scope=scope + '_conv1x1')
+    current = slim.avg_pool2d(current, [2, 2], stride=2, scope=scope+'_AvgPool_2x2')
+    return current
+
+
 
 def densenet(images, num_classes=1001, is_training=False,
              dropout_keep_prob=0.8,
@@ -58,12 +65,67 @@ def densenet(images, num_classes=1001, is_training=False,
     end_points = {}
 
     with tf.variable_scope(scope, 'DenseNet', [images, num_classes]):
-        with slim.arg_scope(bn_drp_scope(is_training=is_training,
-                                         keep_prob=dropout_keep_prob)) as ssc:
-            pass
-            ##########################
-            # Put your code here.
-            ##########################
+        with slim.arg_scope(bn_drp_scope(is_training=is_training,keep_prob=dropout_keep_prob)) as ssc:
+            end_point = scope + 'Conv7x7_Pooling3x3'
+            net = slim.conv2d(images, 2 * growth, [7,7], stride = 2, scope = scope + '_conv7x7' )
+            net = slim.max_pool2d(net, [3, 3], stride=2, scope=scope+'_maxpool3x3')
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+            end_point = 'Dense_Block1'
+            net = block(net, 6, growth, scope=end_point)
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+
+            end_point = 'Transition_Layer1'
+            net = transition(net, reduce_dim(net), end_point)
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+
+            end_point = 'Dense_Block2'
+            net = block(net, 12, growth, scope=end_point)
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+
+            end_point = 'Transition_Layer2'
+            net = transition(net, reduce_dim(net), end_point)
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+
+            end_point = 'Dense_Block3'
+            net = block(net, 24, growth, scope=end_point)
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+
+            end_point = 'Transition_Layer3'
+            net = transition(net, reduce_dim(net), end_point)
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+
+            end_point = 'Dense_Block4'
+            net = block(net, 16, growth, scope=end_point)
+            end_points[end_point] = net
+            print(end_point,net.shape)
+
+
+            end_point = 'Classification_Layer'
+            net = slim.avg_pool2d(net, net.shape[1:3],padding='valid',scope=end_point+'_GAP')
+            logits = slim.conv2d(net, num_classes, [1, 1], activation_fn=None,
+                             normalizer_fn=None, scope='fully_connected_1x1')
+            logits = tf.squeeze(logits, [1, 2], name='SpatialSqueeze')
+
+            end_points['Logits'] = logits
+            print('Logits',net.shape)
+
+            end_points['Predictions'] = slim.softmax(logits, scope='Predictions')
+            print('Predictions',net.shape)
+
 
     return logits, end_points
 
