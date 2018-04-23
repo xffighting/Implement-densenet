@@ -1,5 +1,9 @@
+## 谢飞 330407739 第八周作业 实现Densenet 
 Densenet 的代码请见 
 - nets/densenet.py
+
+Eval截图请见
+- screen_shot_of_eval.png
 
 对growth的理解 
 - 如果每一个Dense Connectivity生成k个feature map, name 第l层会生成   - k0 + k *(l-1) 个输入的feature map. 这里的k就是网络的增长率.
