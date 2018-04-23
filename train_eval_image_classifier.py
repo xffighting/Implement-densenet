@@ -39,7 +39,7 @@ if __name__ == '__main__':
     print('change wording dir to [{0}]'.format(w_d))
     os.chdir(w_d)
 
-    step_per_epoch = 50000 // FLAGS.batch_size
+    step_per_epoch = 10 // FLAGS.batch_size
 
     if FLAGS.checkpoint_path:
         ckpt = ' --checkpoint_path=' + FLAGS.checkpoint_path
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                                          'learning_rate': FLAGS.learning_rate, 'optimizer': FLAGS.optimizer,
                                          'batch_size': FLAGS.batch_size, 'max_number_of_steps': steps, 'clone_on_cpu': FLAGS.clone_on_cpu}) + ckpt)
         for l in p:
-            print(p.strip())
+            print(l.strip())
 
         # eval
         print('################    eval    ################')
