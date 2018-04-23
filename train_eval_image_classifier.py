@@ -51,7 +51,7 @@ if __name__ == '__main__':
         print('################    train    ################')
         p = os.popen(train_cmd.format(**{'dataset_name': FLAGS.dataset_name, 'dataset_dir': FLAGS.dataset_dir,
                                          'model_name': FLAGS. model_name,
-                                         'checkpoint_exclude_scopes': FLAGS.checkpoint_exclude_scopes, 'train_dir': FLAGS. train_dir,
+                                         'checkpoint_exclude_scopes': FLAGS.checkpoint_exclude_scopes, 'train_dir':  FLAGS. train_dir,
                                          'learning_rate': FLAGS.learning_rate, 'optimizer': FLAGS.optimizer,
                                          'batch_size': FLAGS.batch_size, 'max_number_of_steps': steps, 'clone_on_cpu': FLAGS.clone_on_cpu}) + ckpt)
         for l in p:
@@ -64,4 +64,4 @@ if __name__ == '__main__':
                                         'checkpoint_path': FLAGS.train_dir, 'batch_size': FLAGS.batch_size,
                                         'eval_dir': FLAGS. eval_dir, 'max_num_batches': FLAGS. max_num_batches}))
         for l in p:
-            print(p.strip())
+            print(l.strip())
