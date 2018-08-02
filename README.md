@@ -1,4 +1,4 @@
-## 谢飞 330407739 第八周作业 实现Densenet 
+## 实现Densenet 
 Densenet 的代码请见 
 - nets/densenet.py
 
